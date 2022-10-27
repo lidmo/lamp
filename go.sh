@@ -12,11 +12,11 @@ apt install -y software-properties-common apt-transport-https curl wget nano vim
 
 echo "Instalando Apache2"
 apt install -y apache2
-curl -O https://raw.githubusercontent.com/lidmo/lamp/main/apache2/envvars?token=GHSAT0AAAAAABX73LAY3IXEYDIODUNR7AA2Y23B3VQ
+curl -O https://raw.githubusercontent.com/lidmo/lamp/main/apache2/envvars
 mv -f envvars /etc/apache2/envvars
-curl -O https://raw.githubusercontent.com/lidmo/lamp/main/apache2/conf-available/lidmo.conf?token=GHSAT0AAAAAABX73LAZMZPI7YGWNUZMSAPKY23B47Q
+curl -O https://raw.githubusercontent.com/lidmo/lamp/main/apache2/conf-available/lidmo.conf
 mv -f lidmo.conf /etc/apache2/conf-available/lidmo.conf
-curl -O https://raw.githubusercontent.com/lidmo/lamp/main/apache2/virtualhost.sh?token=GHSAT0AAAAAABX73LAZCEHZPPDVZVKW6QFSY23B5WA
+curl -O https://raw.githubusercontent.com/lidmo/lamp/main/apache2/virtualhost.sh
 chmod +x virtualhost.sh
 mv virtualhost.sh /usr/local/bin/a2vhost
 a2enmod rewrite
