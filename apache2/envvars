@@ -1,5 +1,10 @@
 # envvars - default environment variables for apache2ctl
 
+# Start Lídmo vars
+export LIDMO_DOCUMENT_ROOT=/home/wesley/Projetos
+
+# End Lídmo vars
+
 # this won't be correct after changing uid
 unset HOME
 
