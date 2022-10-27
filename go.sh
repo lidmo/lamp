@@ -18,7 +18,7 @@ curl -O https://raw.githubusercontent.com/lidmo/lamp/main/apache2/conf-available
 mv -f lidmo.conf /etc/apache2/conf-available/lidmo.conf
 curl -O https://raw.githubusercontent.com/lidmo/lamp/main/apache2/virtualhost.sh
 chmod +x virtualhost.sh
-mv virtualhost.sh /usr/local/bin/a2vhost
+mv -f virtualhost.sh /usr/local/bin/a2vhost
 a2enmod rewrite
 a2enmod ssl
 a2enconf lidmo
@@ -222,7 +222,7 @@ dpkg-reconfigure phpmyadmin
 echo "Instalando WordPress"
 curl -O https://raw.githubusercontent.com/wp-cli/builds/gh-pages/phar/wp-cli.phar
 chmod +x wp-cli.phar
-mv wp-cli.phar /usr/local/bin/wp
+mv -f wp-cli.phar /usr/local/bin/wp
 
 #curl -O https://raw.githubusercontent.com/wp-cli/wp-cli/master/utils/wp-completion.bash
 
@@ -231,7 +231,8 @@ php -r "copy('https://getcomposer.org/installer', 'composer-setup.php');"
 php -r "if (hash_file('sha384', 'composer-setup.php') === '55ce33d7678c5a611085589f1f3ddf8b3c52d662cd01d4ba75c0ee0459970c2200a51f492d557530c71c15d8dba01eae') { echo 'Installer verified'; } else { echo 'Installer corrupt'; unlink('composer-setup.php'); } echo PHP_EOL;"
 php composer-setup.php
 php -r "unlink('composer-setup.php');"
-mv composer.phar /usr/local/bin/composer
-
+mv -f composer.phar /usr/local/bin/composer
 
 echo "Tudo OK! Já pode começar a trabalhar"
+
+rm -f go.sh
