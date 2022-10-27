@@ -6,17 +6,17 @@ add-apt-repository -r ppa:ondrej/php
 echo "Adicionando Repositórios"
 add-apt-repository -y ppa:ondrej/apache2
 add-apt-repository -y ppa:ondrej/php
-
+apt update
 apt install -y software-properties-common apt-transport-https curl wget nano vim zip unzip openssl ffmpeg git
 
 
 echo "Instalando Apache2"
 apt install -y apache2
-curl -O https://
+curl -O https://raw.githubusercontent.com/lidmo/lamp/main/apache2/envvars?token=GHSAT0AAAAAABX73LAY3IXEYDIODUNR7AA2Y23B3VQ
 mv -f envvars /etc/apache2/envvars
-curl -O https://
+curl -O https://raw.githubusercontent.com/lidmo/lamp/main/apache2/conf-available/lidmo.conf?token=GHSAT0AAAAAABX73LAZMZPI7YGWNUZMSAPKY23B47Q
 mv -f lidmo.conf /etc/apache2/conf-available/lidmo.conf
-curl -O https://raw.githubusercontent.com/RoverWire/virtualhost/master/virtualhost.sh
+curl -O https://raw.githubusercontent.com/lidmo/lamp/main/apache2/virtualhost.sh?token=GHSAT0AAAAAABX73LAZCEHZPPDVZVKW6QFSY23B5WA
 chmod +x virtualhost.sh
 mv virtualhost.sh /usr/local/bin/a2vhost
 a2enmod rewrite
@@ -223,6 +223,8 @@ echo "Instalando WordPress"
 curl -O https://raw.githubusercontent.com/wp-cli/builds/gh-pages/phar/wp-cli.phar
 chmod +x wp-cli.phar
 mv wp-cli.phar /usr/local/bin/wp
+
+#curl -O https://raw.githubusercontent.com/wp-cli/wp-cli/master/utils/wp-completion.bash
 
 echo "Instalando Composer"
 php -r "copy('https://getcomposer.org/installer', 'composer-setup.php');"
