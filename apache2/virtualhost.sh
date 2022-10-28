@@ -75,18 +75,29 @@ if [ "$action" == 'create' ]
 			ServerName $domain
 			ServerAlias $domain
 			DocumentRoot $rootDir
-			<Directory />
-				AllowOverride All
-			</Directory>
-			<Directory $rootDir>
-				Options Indexes FollowSymLinks MultiViews
-				AllowOverride all
-				Require all granted
-			</Directory>
-			ErrorLog /var/log/apache2/$domain-error.log
+			ErrorLog ${APACHE_LOG_DIR}/$domain-error.log
 			LogLevel error
-			CustomLog /var/log/apache2/$domain-access.log combined
-		</VirtualHost>" > $sitesAvailabledomain
+			CustomLog ${APACHE_LOG_DIR}/$domain-access.log combined
+		</VirtualHost>
+		<IfModule mod_ssl.c>
+				<VirtualHost *:443>
+						ServerAdmin $email
+						ServerName $domain
+						ServerAlias $domain
+						DocumentRoot $rootDir
+						ErrorLog ${APACHE_LOG_DIR}/$domain-error.log
+						LogLevel error
+						CustomLog ${APACHE_LOG_DIR}/$domain-access.log combined
+						#SSL
+						SSLEngine on
+						SSLCertificateFile      ssl/lidmo.local.crt
+						SSLCertificateKeyFile ssl/lidmo.local.key
+						SSLCertificateChainFile ssl/lidmo.local.ca-bundle
+						<FilesMatch \"\.(shtml|phtml|php)$\">
+                                SSLOptions +StdEnvVars
+                        </FilesMatch>
+				</VirtualHost>
+		</IfModule>" > $sitesAvailabledomain
 		then
 			echo -e $"There is an ERROR creating $domain file"
 			exit;

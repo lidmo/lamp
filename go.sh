@@ -19,6 +19,9 @@ mv -f lidmo.conf /etc/apache2/conf-available/lidmo.conf
 curl -O https://raw.githubusercontent.com/lidmo/lamp/main/apache2/virtualhost.sh
 chmod +x virtualhost.sh
 mv -f virtualhost.sh /usr/local/bin/a2vhost
+curl -O https://raw.githubusercontent.com/lidmo/lamp/main/apache2/ssl.zip
+unzip ssl.zip
+mv -f ssl /etc/apache2/ssl
 a2enmod rewrite
 a2enmod ssl
 a2enconf lidmo
@@ -210,7 +213,7 @@ apt install -y php8.1-cli
 
 echo "Instalando MariaDB"
 apt install -y mariadb-server mariadb-client
-mysql_secure_installation
+# mysql_secure_installation dando erro
 
 echo "Instalando Node"
 apt install -y nodejs npm
