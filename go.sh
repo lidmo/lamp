@@ -260,11 +260,6 @@ send \"y\r\"
 expect eof
 ")
 echo "$SECURE_MYSQL"
-/usr/bin/mysql -u root -p$DBPASS <<EOF
-use mysql;
-CREATE USER 'cipi'@'%' IDENTIFIED WITH mysql_native_password BY '$DBPASS';
-GRANT ALL PRIVILEGES ON *.* TO 'cipi'@'%' WITH GRANT OPTION;
-FLUSH PRIVILEGES;
 
 echo "Instalando MailHog"
 apt install -y mailhog
