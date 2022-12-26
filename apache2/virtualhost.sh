@@ -78,7 +78,25 @@ if [ "$action" == 'create' ]
 			ErrorLog ${APACHE_LOG_DIR}/$domain-error.log
 			LogLevel error
 			CustomLog ${APACHE_LOG_DIR}/$domain-access.log combined
-		</VirtualHost>" > $sitesAvailabledomain
+		</VirtualHost>
+		<IfModule mod_ssl.c>
+			<VirtualHost *:443>
+				ServerAdmin $email
+				ServerName $domain
+				ServerAlias $domain
+				DocumentRoot $rootDir
+				ErrorLog ${APACHE_LOG_DIR}/$domain-error.log
+				LogLevel error
+				CustomLog ${APACHE_LOG_DIR}/$domain-access.log combined
+				#SSL
+				SSLEngine on
+				SSLCertificateFile      ssl/local.crt
+				SSLCertificateKeyFile ssl/local.key
+				<FilesMatch \"\.(shtml|phtml|php)$\">
+                                	SSLOptions +StdEnvVars
+                        	</FilesMatch>
+			</VirtualHost>
+		</IfModule>" > $sitesAvailabledomain
 		then
 			echo -e $"There is an ERROR creating $domain file"
 			exit;
@@ -119,9 +137,6 @@ if [ "$action" == 'create' ]
 
 		### enable website
 		a2ensite $domain
-		
-		### gerar SSL
-		certbot --apache -d $domain --non-interactive --agree-tos --register-unsafely-without-email
 
 		### restart Apache
 		/etc/init.d/apache2 reload
@@ -148,9 +163,6 @@ if [ "$action" == 'create' ]
 
 			### disable website
 			a2dissite $domain
-			
-			### excluir ssl
-			rm -rf /etc/letsencrypt/live/$domain
 
 			### restart Apache
 			/etc/init.d/apache2 reload
