@@ -14,7 +14,7 @@ add-apt-repository -y ppa:ondrej/php
 add-apt-repository ppa:tiagohillebrandt/mailhog
 curl -fsSL https://deb.nodesource.com/setup_lts.x | bash -
 apt update
-apt install -y software-properties-common apt-transport-https curl wget nano vim zip unzip openssl ffmpeg git supervisor certbot python3-certbot-apache
+apt install -y software-properties-common apt-transport-https curl wget nano vim zip unzip openssl ffmpeg git supervisor
 
 
 echo "Instalando Apache2"
@@ -279,5 +279,12 @@ php -r "copy('https://getcomposer.org/installer', 'composer-setup.php');"
 php composer-setup.php
 php -r "unlink('composer-setup.php');"
 mv -f composer.phar /usr/local/bin/composer
+
+echo "Instalando SSL"
+mkdir /etc/apache2/ssl
+openssl req -x509 -out /etc/apache2/ssl/local.crt -keyout /etc/apache2/ssl/local.key \
+  -newkey rsa:2048 -nodes -sha256 \
+  -subj '/CN=local' -extensions EXT -config <( \
+   printf "[dn]\nCN=local\n[req]\ndistinguished_name = dn\n[EXT]\nsubjectAltName=DNS:local\nkeyUsage=digitalSignature\nextendedKeyUsage=serverAuth")
 
 echo "Tudo OK! Já pode começar a trabalhar"
