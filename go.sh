@@ -1,13 +1,20 @@
 #!/bin/bash
+
+DBPASS=toor
+
 echo "Removendo Repositórios"
 add-apt-repository -r ppa:ondrej/apache2
 add-apt-repository -r ppa:ondrej/php
+add-apt-repository -r ppa:tiagohillebrandt/mailhog
+rm -r /etc/apt/sources.list.d/nodesource.list
 
 echo "Adicionando Repositórios"
 add-apt-repository -y ppa:ondrej/apache2
 add-apt-repository -y ppa:ondrej/php
+add-apt-repository ppa:tiagohillebrandt/mailhog
+curl -fsSL https://deb.nodesource.com/setup_lts.x | bash -
 apt update
-apt install -y software-properties-common apt-transport-https curl wget nano vim zip unzip openssl ffmpeg git
+apt install -y software-properties-common apt-transport-https curl wget nano vim zip unzip openssl ffmpeg git supervisor certbot python3-certbot-apache
 
 
 echo "Instalando Apache2"
@@ -19,9 +26,6 @@ mv -f lidmo.conf /etc/apache2/conf-available/lidmo.conf
 curl -O https://raw.githubusercontent.com/lidmo/lamp/main/apache2/virtualhost.sh
 chmod +x virtualhost.sh
 mv -f virtualhost.sh /usr/local/bin/a2vhost
-curl -O https://raw.githubusercontent.com/lidmo/lamp/main/apache2/ssl.zip
-unzip ssl.zip
-mv -f ssl /etc/apache2/ssl
 a2enmod rewrite
 a2enmod ssl
 a2enconf lidmo
@@ -211,16 +215,62 @@ apt install -y php8.1-fileinfo
 apt install -y php8.1-imap
 apt install -y php8.1-cli
 
+echo "Instalando PHP 8.2"
+apt install -y php8.2
+apt install -y php8.2-common
+apt install -y php8.2-curl
+apt install -y php8.2-openssl
+apt install -y php8.2-bcmath
+apt install -y php8.2-mbstring
+apt install -y php8.2-tokenizer
+apt install -y php8.2-mysql
+apt install -y php8.2-sqlite3
+apt install -y php8.2-pgsql
+apt install -y php8.2-redis
+apt install -y php8.2-memcached
+apt install -y php8.2-json
+apt install -y php8.2-zip
+apt install -y php8.2-xml
+apt install -y php8.2-soap
+apt install -y php8.2-gd
+apt install -y php8.2-imagick
+apt install -y php8.2-fileinfo
+apt install -y php8.2-imap
+apt install -y php8.2-cli
+
 echo "Instalando MariaDB"
 apt install -y mariadb-server mariadb-client
-# mysql_secure_installation dando erro
+SECURE_MYSQL=$(expect -c "
+set timeout 10
+spawn mysql_secure_installation
+expect \"Press y|Y for Yes, any other key for No:\"
+send \"n\r\"
+expect \"New password:\"
+send \"$DBPASS\r\"
+expect \"Re-enter new password:\"
+send \"$DBPASS\r\"
+expect \"Remove anonymous users? (Press y|Y for Yes, any other key for No)\"
+send \"y\r\"
+expect \"Disallow root login remotely? (Press y|Y for Yes, any other key for No)\"
+send \"n\r\"
+expect \"Remove test database and access to it? (Press y|Y for Yes, any other key for No)\"
+send \"y\r\"
+expect \"Reload privilege tables now? (Press y|Y for Yes, any other key for No) \"
+send \"y\r\"
+expect eof
+")
+echo "$SECURE_MYSQL"
+/usr/bin/mysql -u root -p$DBPASS <<EOF
+use mysql;
+CREATE USER 'cipi'@'%' IDENTIFIED WITH mysql_native_password BY '$DBPASS';
+GRANT ALL PRIVILEGES ON *.* TO 'cipi'@'%' WITH GRANT OPTION;
+FLUSH PRIVILEGES;
+
+echo "Instalando MailHog"
+apt install -y mailhog
 
 echo "Instalando Node"
-apt install -y nodejs npm
-
-echo "Instalando PHPMyAdmin"
-apt install -y phpmyadmin 
-dpkg-reconfigure phpmyadmin
+apt install -y nodejs
 
 echo "Instalando WordPress"
 curl -O https://raw.githubusercontent.com/wp-cli/builds/gh-pages/phar/wp-cli.phar
@@ -231,11 +281,8 @@ mv -f wp-cli.phar /usr/local/bin/wp
 
 echo "Instalando Composer"
 php -r "copy('https://getcomposer.org/installer', 'composer-setup.php');"
-php -r "if (hash_file('sha384', 'composer-setup.php') === '55ce33d7678c5a611085589f1f3ddf8b3c52d662cd01d4ba75c0ee0459970c2200a51f492d557530c71c15d8dba01eae') { echo 'Installer verified'; } else { echo 'Installer corrupt'; unlink('composer-setup.php'); } echo PHP_EOL;"
 php composer-setup.php
 php -r "unlink('composer-setup.php');"
 mv -f composer.phar /usr/local/bin/composer
 
 echo "Tudo OK! Já pode começar a trabalhar"
-
-rm -f go.sh
