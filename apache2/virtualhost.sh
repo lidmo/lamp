@@ -122,7 +122,6 @@ if [ "$action" == 'create' ]
 		
 		### gerar SSL
 		certbot --apache -d $domain --non-interactive --agree-tos --register-unsafely-without-email
-		sed -i 's/443 ssl/443 ssl http2/g' $sitesAvailabledomain
 
 		### restart Apache
 		/etc/init.d/apache2 reload
@@ -149,6 +148,9 @@ if [ "$action" == 'create' ]
 
 			### disable website
 			a2dissite $domain
+			
+			### excluir ssl
+			rm -rf /etc/letsencrypt/live/$domain
 
 			### restart Apache
 			/etc/init.d/apache2 reload
